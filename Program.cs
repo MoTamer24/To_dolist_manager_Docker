@@ -10,10 +10,9 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 // Dependency injection for the application.
-// For testing now, we use EF Core's in-memory database so there is no SQL Server setup required.
-// When you are ready for SQL Server, switch the provider to UseSqlServer and update the connection string.
+// Configured to use SQL Server based on the connection string in appsettings.json.
 builder.Services.AddDbContext<TodoDbContext>(options =>
-    options.UseInMemoryDatabase("TodoAppDb"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ITaskService, TaskService>();
 

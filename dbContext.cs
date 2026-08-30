@@ -31,14 +31,3 @@ public class TodoDbContext : DbContext
         });
     }
 }
-
-// Backward compatibility wrapper for older code if you still reference the old class name.
-// It is not used by the app anymore, but keeping it prevents breakage while upgrading.
-public class dbContext : TodoDbContext
-{
-    public dbContext() : base(new DbContextOptionsBuilder<TodoDbContext>()
-        .UseInMemoryDatabase("TodoApp_Compatibility")
-        .Options)
-    {
-    }
-}
