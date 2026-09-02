@@ -19,7 +19,20 @@ builder.Services.AddDbContext<TodoDbContext>(options =>
 
 builder.Services.AddScoped<ITaskService, TaskService>();
 
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:8080")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
 var app = builder.Build();
+
+// 2. Use CORS Middleware (must be before MapControllers / UseAuthorization)
+app.UseCors("AllowFrontend");
 
 
 
