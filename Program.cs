@@ -9,6 +9,9 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+var cs = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"[DEBUG] Connection string: {cs}");
+
 // Dependency injection for the application.
 // Configured to use SQL Server based on the connection string in appsettings.json.
 builder.Services.AddDbContext<TodoDbContext>(options =>
@@ -18,7 +21,16 @@ builder.Services.AddScoped<ITaskService, TaskService>();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Todo API is running. Use /tasks to create, list, update, toggle and delete tasks.");
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
+    db.Database.Migrate(); // if using migrations
+    // or: db.Database.EnsureCreated(); // if not using migrations at all
+}
+
+app.MapGet("/", () => $"[DEBUG] Connection string: {cs}");
 
 app.MapGet("/tasks", async (ITaskService taskService) =>
 {
