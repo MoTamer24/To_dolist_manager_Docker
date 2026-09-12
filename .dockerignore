@@ -1,0 +1,27 @@
+# Avoid copying local build artifacts (Crucial to prevent architecture/SDK mismatches)
+**/bin/
+**/obj/
+
+# Source control
+.git
+.gitignore
+.vs
+.vscode
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose*
+
+# User-specific or IDE settings
+*.user
+*.suo
+*.sln.docstates
+
+# Logs and diagnostics
+*.log
+.crash
+
+# Frontend/Node dependencies (if using Angular/React/Blazor WASM hosted)
+**/node_modules/
+**/dist/
