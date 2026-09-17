@@ -10,24 +10,29 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
 var cs = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"[DEBUG] Connection string: {cs}");
 
 // Dependency injection for the application.
 // Configured to use SQL Server based on the connection string in appsettings.json.
 builder.Services.AddDbContext<TodoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(cs));
 
 builder.Services.AddScoped<ITaskService, TaskService>();
 
 
 
+var allowedOrigin = builder.Configuration.GetValue<string>("AllowedOrigins")
+                    ?? throw new InvalidOperationException("CORS configuration 'AllowedOrigins' is missing.");
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        policy => policy.WithOrigins("http://localhost:8080")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod());
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(allowedOrigin)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
+
 
 var app = builder.Build();
 
