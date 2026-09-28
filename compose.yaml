@@ -1,0 +1,47 @@
+services:
+  backend:
+    image: motamerf/basictodolist:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - AllowedOrigins=http://localhost:3000
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=TodoAppDb;User Id=sa;Password=Motamer@farh121;TrustServerCertificate=True;
+      - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - db
+    networks:
+      - todo-network
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    ports:
+      - "1432:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Motamer@farh121
+    volumes:
+      # Docker fully manages this named volume and its permissions
+      - sqldata:/var/opt/mssql
+    networks:
+      - todo-network
+
+  frontend:
+    build:
+      context: ./frontend2
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "http://localhost:8080"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
+
+# Declare the named volume for Docker to provision
+volumes:
+  sqldata:

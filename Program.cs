@@ -48,7 +48,7 @@ using (var scope = app.Services.CreateScope())
     // or: db.Database.EnsureCreated(); // if not using migrations at all
 }
 
-app.MapGet("/", () => $"[DEBUG] Connection string: {cs}");
+app.MapGet("/", () => $"[DEBUG] Connection string: {allowedOrigin}");
 
 app.MapGet("/tasks", async (ITaskService taskService) =>
 {
